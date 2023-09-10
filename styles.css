@@ -10,6 +10,7 @@ body {
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 #gallery {
@@ -25,6 +26,13 @@ body {
     object-fit: cover;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+#gallery img:hover {
+    transform: scale(1.1);
+    z-index: 100;
+    position: relative;
 }
 
 .pagination {
@@ -32,15 +40,25 @@ body {
     justify-content: center;
     align-items: center;
     margin-top: 20px;
+    flex-wrap: wrap;
 }
 
-.pagination button {
+.pagination button, .pagination input {
     padding: 10px 20px;
-    margin: 0 10px;
+    margin: 5px;
     border: none;
     background-color: #007BFF;
     color: #fff;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pagination input {
+    width: 100px;
+    border-radius: 5px;
+    border: 1px solid #007BFF;
+    background-color: #fff;
+    color: #000;
 }
 
 .pagination button:disabled {
@@ -49,4 +67,24 @@ body {
 
 .pagination #page-info {
     font-size: 16px;
+}
+
+@media (max-width: 600px) {
+    .gallery-container {
+        padding: 10px;
+    }
+    
+    #gallery img {
+        width: 100%;
+        height: auto;
+    }
+
+    .pagination {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .pagination button, .pagination input {
+        margin: 5px 0;
+    }
 }
