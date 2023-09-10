@@ -56,6 +56,24 @@ function updatePagination(images, page) {
         }
     };
 }
+document.addEventListener('DOMContentLoaded', () => {
+    const fullscreenContainer = document.getElementById('fullscreen-container');
+    
+    document.getElementById('gallery').addEventListener('mouseover', event => {
+        if(event.target.tagName === 'IMG') {
+            const clone = event.target.cloneNode();
+            fullscreenContainer.innerHTML = '';
+            fullscreenContainer.appendChild(clone);
+            fullscreenContainer.style.display = 'flex';
+        }
+    });
+
+    document.getElementById('gallery').addEventListener('mouseout', event => {
+        if(event.target.tagName === 'IMG') {
+            fullscreenContainer.style.display = 'none';
+        }
+    });
+});
 
 fetchImages().then(images => {
     renderGallery(images, currentPage);
