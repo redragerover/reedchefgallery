@@ -1,25 +1,35 @@
 let currentPage = 1;
 const itemsPerPage = 12;
-  function handleMouseOver(event) {
+
+async function fetchImages() {
+    const response = await fetch('images.json');
+    const data = await response.json();
+    return data;
+}
+
+let timeoutId;
+const fullscreenContainer = document.getElementById('fullscreen-container');
+const closeButton = document.getElementById('close-btn');
+
+function handleMouseOver(event) {
     if (timeoutId) {
-      clearTimeout(timeoutId);
+        clearTimeout(timeoutId);
     }
     const clone = event.target.cloneNode();
-    fullscreenContainer.innerHTML = "";
+    fullscreenContainer.innerHTML = '';
     fullscreenContainer.appendChild(clone);
-    fullscreenContainer.appendChild(closeButton); // Ensure the close button is added back
-    fullscreenContainer.style.display = "flex";
-  }
+    fullscreenContainer.appendChild(closeButton);
+    fullscreenContainer.style.display = 'flex';
+}
 
-  function handleMouseOut(event) {
+function handleMouseOut(event) {
     timeoutId = setTimeout(() => {
-      fullscreenContainer.style.display = "none";
+        fullscreenContainer.style.display = 'none';
     }, 100);
-  }
-async function fetchImages() {
-  const response = await fetch("images.json");
-  const data = await response.json();
-  return data;
+}
+
+function closeFullscreen() {
+    fullscreenContainer.style.display = 'none';
 }
 
 function renderGallery(images, page) {
@@ -37,79 +47,67 @@ function renderGallery(images, page) {
     });
 }
 
-
 function updatePagination(images, page) {
-  const totalPages = Math.ceil(images.length / itemsPerPage);
+    const totalPages = Math.ceil(images.length / itemsPerPage);
+    
+    const pageInfo = document.getElementById('page-info');
+    pageInfo.textContent = `Page ${page} of ${totalPages}`;
+    
+    const prevButton = document.getElementById('prev');
+    const nextButton = document.getElementById('next');
+    
+    prevButton.disabled = page === 1;
+    nextButton.disabled = page >= totalPages;
 
-  const pageInfo = document.getElementById("page-info");
-  pageInfo.textContent = `Page ${page} of ${totalPages}`;
+    prevButton.onclick = () => {
+        currentPage = Math.max(1, page - 1);
+        renderGallery(images, currentPage);
+        updatePagination(images, currentPage);
+    };
 
-  const prevButton = document.getElementById("prev");
-  const nextButton = document.getElementById("next");
-
-  prevButton.disabled = page === 1;
-  nextButton.disabled = page >= totalPages;
-
-  prevButton.onclick = () => {
-    currentPage = Math.max(1, page - 1);
-    renderGallery(images, currentPage);
-    updatePagination(images, currentPage);
-  };
-
-  nextButton.onclick = () => {
-    currentPage = Math.min(totalPages, page + 1);
-    renderGallery(images, currentPage);
-    updatePagination(images, currentPage);
-  };
-
-  const pageInput = document.getElementById("page-input");
-  pageInput.onchange = () => {
-    const inputPage = parseInt(pageInput.value);
-    if (inputPage >= 1 && inputPage <= totalPages) {
-      currentPage = inputPage;
-      renderGallery(images, currentPage);
-      updatePagination(images, currentPage);
-    } else {
-      alert("Invalid page number");
-    }
-  };
+    nextButton.onclick = () => {
+        currentPage = Math.min(totalPages, page + 1);
+        renderGallery(images, currentPage);
+        updatePagination(images, currentPage);
+    };
+    
+    const pageInput = document.getElementById('page-input');
+    pageInput.onchange = () => {
+        const inputPage = parseInt(pageInput.value);
+        if (inputPage >= 1 && inputPage <= totalPages) {
+            currentPage = inputPage;
+            renderGallery(images, currentPage);
+            updatePagination(images, currentPage);
+        } else {
+            alert('Invalid page number');
+        }
+    };
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const fullscreenContainer = document.getElementById("fullscreen-container");
-  const closeButton = document.getElementById("close-btn");
-  let timeoutId;
 
-  function closeFullscreen() {
-    fullscreenContainer.style.display = "none";
-  }
-
-  fullscreenContainer.addEventListener("mouseover", () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-  });
-
-  fullscreenContainer.addEventListener("click", (event) => {
-    if (event.target === fullscreenContainer) {
-      closeFullscreen();
-    }
-  });
-
-  closeButton.addEventListener("click", closeFullscreen);
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      closeFullscreen();
-    }
-  });
-
-  fetchImages().then((images) => {
-    renderGallery(images, currentPage);
-    updatePagination(images, currentPage);
-
-    document.querySelectorAll("#gallery img").forEach((img) => {
-      img.addEventListener("click", handleMouseOver);
-      img.addEventListener("mouseout", handleMouseOut);
+document.addEventListener('DOMContentLoaded', () => {
+    
+    fullscreenContainer.addEventListener('click', () => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
     });
-  });
+
+    fullscreenContainer.addEventListener('click', (event) => {
+        if (event.target === fullscreenContainer) {
+            closeFullscreen();
+        }
+    });
+
+    closeButton.addEventListener('click', closeFullscreen);
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeFullscreen();
+        }
+    });
+
+    fetchImages().then(images => {
+        renderGallery(images, currentPage);
+        updatePagination(images, currentPage);
+    });
 });
