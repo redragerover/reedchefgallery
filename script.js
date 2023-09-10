@@ -61,3 +61,16 @@ fetchImages().then(images => {
     renderGallery(images, currentPage);
     updatePagination(images, currentPage);
 });
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('gallery').addEventListener('mouseover', event => {
+        if(event.target.tagName === 'IMG') {
+            event.target.classList.add('fullscreen');
+        }
+    });
+
+    document.getElementById('gallery').addEventListener('mouseout', event => {
+        if(event.target.tagName === 'IMG') {
+            event.target.classList.remove('fullscreen');
+        }
+    });
+});
