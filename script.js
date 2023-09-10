@@ -1,6 +1,21 @@
 let currentPage = 1;
 const itemsPerPage = 12;
+  function handleMouseOver(event) {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    const clone = event.target.cloneNode();
+    fullscreenContainer.innerHTML = "";
+    fullscreenContainer.appendChild(clone);
+    fullscreenContainer.appendChild(closeButton); // Ensure the close button is added back
+    fullscreenContainer.style.display = "flex";
+  }
 
+  function handleMouseOut(event) {
+    timeoutId = setTimeout(() => {
+      fullscreenContainer.style.display = "none";
+    }, 100);
+  }
 async function fetchImages() {
   const response = await fetch("images.json");
   const data = await response.json();
@@ -8,17 +23,20 @@ async function fetchImages() {
 }
 
 function renderGallery(images, page) {
-  const gallery = document.getElementById("gallery");
-  gallery.innerHTML = "";
-  const startIndex = (page - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  images.slice(startIndex, endIndex).forEach((url) => {
-    const img = document.createElement("img");
-    img.src = url;
-    img.loading = "lazy";
-    gallery.appendChild(img);
-  });
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = '';
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    images.slice(startIndex, endIndex).forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.loading = 'lazy';
+        img.addEventListener('click', handleMouseOver);
+        img.addEventListener('mouseout', handleMouseOut);
+        gallery.appendChild(img);
+    });
 }
+
 
 function updatePagination(images, page) {
   const totalPages = Math.ceil(images.length / itemsPerPage);
@@ -60,23 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const fullscreenContainer = document.getElementById("fullscreen-container");
   const closeButton = document.getElementById("close-btn");
   let timeoutId;
-
-  function handleMouseOver(event) {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    const clone = event.target.cloneNode();
-    fullscreenContainer.innerHTML = "";
-    fullscreenContainer.appendChild(clone);
-    fullscreenContainer.appendChild(closeButton); // Ensure the close button is added back
-    fullscreenContainer.style.display = "flex";
-  }
-
-  function handleMouseOut(event) {
-    timeoutId = setTimeout(() => {
-      fullscreenContainer.style.display = "none";
-    }, 100);
-  }
 
   function closeFullscreen() {
     fullscreenContainer.style.display = "none";
