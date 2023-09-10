@@ -31,18 +31,6 @@ body {
     cursor: pointer;
 }
 
-.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: contain;
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 0;
-    z-index: 1000;
-}
-
 .pagination {
     display: flex;
     justify-content: center;
